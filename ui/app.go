@@ -51,8 +51,6 @@ const (
 	phaseDone
 )
 
-var frameN int
-
 type stepResultMsg struct{ res engine.StepResult }
 type runDoneMsg struct{}
 
@@ -137,10 +135,8 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.applySize(msg.Width, msg.Height)
 		return m, nil
 	case progress.FrameMsg:
-		frameN++
 		next, cmd := m.progress.Update(msg)
 		m.progress = next.(progress.Model)
-		println("DBGF", frameN, cmd != nil, m.progress.IsAnimating(), strings.Count(m.View(), "\u2588"))
 		return m, cmd
 	}
 	switch m.phase {
