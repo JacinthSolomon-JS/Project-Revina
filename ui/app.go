@@ -51,6 +51,8 @@ const (
 	phaseDone
 )
 
+var frameN int
+
 type stepResultMsg struct{ res engine.StepResult }
 type runDoneMsg struct{}
 
@@ -67,6 +69,7 @@ type model struct {
 
 	done, applied, satisfied, skipped, failed int
 	logLines                                  []string
+	termW, termH                              int
 }
 
 func newModel(ctx context.Context, opts Options) *model {
@@ -84,7 +87,7 @@ func newModel(ctx context.Context, opts Options) *model {
 		}.Render(),
 		planView:  components.PlanList{Steps: opts.Steps}.Render(),
 		progress:  pg,
-		logView:   viewport.New(0, 0),
+		logView:   viewport.New(0, 1),
 		resultsCh: make(chan engine.StepResult, len(opts.Steps)+1),
 	}
 }
@@ -129,14 +132,50 @@ func (m *model) waitResults() tea.Cmd {
 }
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.applySize(msg.Width, msg.Height)
+		return m, nil
+	case progress.FrameMsg:
+		frameN++
+		next, cmd := m.progress.Update(msg)
+		m.progress = next.(progress.Model)
+		println("DBGF", frameN, cmd != nil, m.progress.IsAnimating(), strings.Count(m.View(), "\u2588"))
+		return m, cmd
+	}
 	switch m.phase {
 	case phasePlan:
 		return m.updatePlan(msg)
 	case phaseRun:
 		return m.updateRun(msg)
-	default:
+	default: // phaseDone: show the summary until the user dismisses it
+		if k, ok := msg.(tea.KeyMsg); ok {
+			switch k.String() {
+			case "q", "esc", "enter":
+				return m, tea.Quit
+			}
+		}
 		return m, nil
 	}
+}
+
+// applySize resizes the run-view widgets. Heights and widths are clamped so a
+// tiny or zero-sized terminal can never give the viewport a negative height
+// (which used to panic visibleLines with a slice out of range).
+//
+// The log viewport is sized so the *entire* view fits the terminal: bubbletea
+// only paints the last height lines, so a view taller than the terminal would
+// push the progress bar off the top of the painted window and freeze it
+// visually. The done view is taller (summary + hint), so it needs extra room.
+func (m *model) applySize(width, height int) {
+	m.termW, m.termH = width, height
+	overhead := 4 // header, blanks, progress bar
+	if m.phase == phaseDone {
+		overhead = 7 // + summary + hint
+	}
+	m.logView.Width = max(0, width)
+	m.logView.Height = max(1, height-overhead)
+	m.progress.Width = max(10, width-4)
 }
 
 func (m *model) updatePlan(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -149,10 +188,6 @@ func (m *model) updatePlan(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.phase = phaseRun
 			return m, m.startRun()
 		}
-	case tea.WindowSizeMsg:
-		m.logView.Width = msg.Width
-		m.logView.Height = msg.Height - 4
-		m.progress.Width = msg.Width - 4
 	}
 	return m, nil
 }
@@ -160,22 +195,24 @@ func (m *model) updatePlan(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *model) updateRun(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case stepResultMsg:
-		m.record(msg.res)
-		return m, m.waitResults()
+		return m, tea.Batch(m.record(msg.res), m.waitResults())
 	case runDoneMsg:
 		m.phase = phaseDone
-		return m, tea.Quit
-	case tea.WindowSizeMsg:
-		m.logView.Width = msg.Width
-		m.logView.Height = msg.Height - 4
-		m.progress.Width = msg.Width - 4
+		m.applySize(m.termW, m.termH) // make room for summary + hint
+		return m, nil
 	}
 	return m, nil
 }
 
-func (m *model) record(res engine.StepResult) {
+// record counts a finished step, appends its log line, and returns the
+// progress bar's animation command (which must be run for the bar to move).
+func (m *model) record(res engine.StepResult) tea.Cmd {
 	m.done++
-	m.progress.SetPercent(float64(m.done) / float64(len(m.opts.Steps)))
+	frac := 0.0
+	if n := len(m.opts.Steps); n > 0 {
+		frac = float64(m.done) / float64(n)
+	}
+	cmd := m.progress.SetPercent(frac)
 
 	style := lipgloss.NewStyle()
 	var line string
@@ -200,6 +237,7 @@ func (m *model) record(res engine.StepResult) {
 	m.logLines = append(m.logLines, style.Render(line))
 	m.logView.SetContent(strings.Join(m.logLines, "\n"))
 	m.logView.GotoBottom()
+	return cmd
 }
 
 func (m *model) View() string {
@@ -211,7 +249,8 @@ func (m *model) View() string {
 		return m.header + "\n\n" + m.progress.View() + "\n\n" + m.logView.View()
 	default:
 		return m.header + "\n\n" + m.progress.View() + "\n\n" + m.logView.View() +
-			"\n\n" + summaryStyle.Render(m.summary())
+			"\n\n" + summaryStyle.Render(m.summary()) + "\n" +
+			hintStyle.Render("q / esc / enter: quit")
 	}
 }
 

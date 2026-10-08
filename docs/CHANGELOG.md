@@ -34,6 +34,14 @@ Changelog; versioning is 0.x until the public contract stabilizes.
   shadowed by the embedded one.
 - Restored the missing `charmbracelet/harmonica` entry in `go.mod`/`go.sum`
   (a `go build`/`go vet` breaker); the checksum DB now governs all module hashes.
+- TUI: the run no longer panics ("slice bounds out of range") on tiny or
+  zero-height terminals — the log viewport height is clamped.
+- TUI: the progress bar now animates to the real completion percentage
+  (its frame command was being discarded and `FrameMsg` was not forwarded,
+  leaving it frozen at 0%); views are sized so the bar stays inside the
+  terminal's painted window even on the summary screen.
+- TUI: the completion summary now stays on screen until dismissed instead of
+  quitting before it could render.
 
 ### Security
 - Package names in profiles are validated (`^[A-Za-z0-9][A-Za-z0-9+_.:=@-]*$`);
