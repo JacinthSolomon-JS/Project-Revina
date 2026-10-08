@@ -4,7 +4,7 @@ github.com/charmbracelet/bubbles v0.20.0 h1:jSZu6qD8cRQ6k9OMfR1WlM+ruM8fkPWkHvQW
 github.com/charmbracelet/bubbles v0.20.0/go.mod h1:39slydyswPy+uVOHZ5x/GjwVAFkCsV8IIVy+4MhzwwU=
 github.com/charmbracelet/bubbletea v1.3.0 h1:fPMyirm0u3Fou+flch7hlJN9krlnVURrkUVDwqXjoAc=
 github.com/charmbracelet/bubbletea v1.3.0/go.mod h1:eTaHfqbIwvBhFQM/nlT1NsGc4kp8jhF8LfUK67XiTDM=
-github.com/charmbracelet/harmonica v0.2.0 h1:tLkQaLUy2j4zO2xfii7gbZmBvT04FwsX2OMUPTi7TwA=
+github.com/charmbracelet/harmonica v0.2.0 h1:8NxJWRWg/bzKqqEaaeFNipOu77YR5t8aSwG4pgaUBiQ=
 github.com/charmbracelet/harmonica v0.2.0/go.mod h1:KSri/1RMQOZLbw7AHqgcBycp8pgJnQMYYT8QZRqZ1Ao=
 github.com/charmbracelet/lipgloss v1.0.0 h1:O7VkGDvqEdGi93X+DeqsQ7PKHDgtQfF8j8/O2qFMQNg=
 github.com/charmbracelet/lipgloss v1.0.0/go.mod h1:U5fy9Z+C38obMs+T+tJqst9VGzlOYGj4ri9reL3qUlo=

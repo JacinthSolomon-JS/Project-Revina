@@ -29,6 +29,11 @@ Changelog; versioning is 0.x until the public contract stabilizes.
 ### Fixed
 - Terminology corrections: reverse-engineering section lists Rizin/Cutter and
   iaito (not "Rizal"); macOS auditing is OpenBSM, not auditd.
+- `--profile <name>` now prefers an existing file with that name over the
+  embedded profile of the same name; previously a local `dev.yaml` was silently
+  shadowed by the embedded one.
+- Restored the missing `charmbracelet/harmonica` entry in `go.mod`/`go.sum`
+  (a `go build`/`go vet` breaker); the checksum DB now governs all module hashes.
 
 ### Security
 - Package names in profiles are validated (`^[A-Za-z0-9][A-Za-z0-9+_.:=@-]*$`);

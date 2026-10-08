@@ -90,16 +90,17 @@ rules (mirrored in `docs/AGENTS.md`):
 
 ## 6. Dependency integrity
 
-- All runtime dependencies are pinned in `go.mod`/`go.sum`.
-- **Known caveat:** some modules were first fetched against a flaky network with
-  `GOSUMDB=off`, and `charmbracelet/harmonica` was built from the upstream Git
-  tag and hashed locally. `go.sum` is self-consistent and passes `go mod
-  verify`, but those entries have not been cross-checked against sum.golang.org.
-  Before a release, on a stable network run:
+- All runtime dependencies are pinned in `go.mod`/`go.sum`, and `go.sum` has
+  been fully cross-checked against the official checksum database
+  (`GOSUMDB=sum.golang.org go mod tidy` + `go mod verify`). The earlier caveat
+  about `charmbracelet/harmonica` being hashed from a locally built zip no
+  longer applies: the official module hash now supersedes it.
+- Before a release, re-run `go mod tidy` and `go mod verify` on a stable
+  network and review any hash changes:
 
   ```bash
-  GOSUMDB=on go mod verify
-  go get -u=patch ./... && go mod tidy
+  GOSUMDB=sum.golang.org go mod tidy
+  go mod verify
   ```
 
   and confirm the recorded hashes match the official checksum database.

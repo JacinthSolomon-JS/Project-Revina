@@ -165,3 +165,30 @@ func TestAuditReportsMissing(t *testing.T) {
 		t.Errorf("output missing missing state:\n%s", out)
 	}
 }
+
+func TestLoadProfilePrefersExistingFileOverEmbedded(t *testing.T) {
+	dir := t.TempDir()
+	local := "name: local-setup\ntasks:\n  - id: cli\n    kind: package\n    packages:\n      - ripgrep\n"
+	if err := os.WriteFile(filepath.Join(dir, "dev.yaml"), []byte(local), 0o644); err != nil {
+		t.Fatalf("write local dev.yaml: %v", err)
+	}
+	t.Chdir(dir)
+
+	p, err := loadProfile("dev.yaml")
+	if err != nil {
+		t.Fatalf("loadProfile: %v", err)
+	}
+	if p.Name != "local-setup" {
+		t.Errorf("expected local file to win over embedded name, got %q", p.Name)
+	}
+}
+
+func TestLoadProfileFallsBackToEmbedded(t *testing.T) {
+	p, err := loadProfile("dev.yaml")
+	if err != nil {
+		t.Fatalf("loadProfile: %v", err)
+	}
+	if p.Name != "dev" {
+		t.Errorf("expected embedded dev profile, got %q", p.Name)
+	}
+}

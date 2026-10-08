@@ -299,10 +299,13 @@ func summarize(cmd *cobra.Command, results []engine.StepResult) error {
 	return nil
 }
 
-// loadProfile resolves a profile name from the embedded set, or a file path.
+// loadProfile resolves a profile from an existing file, or an embedded name.
 func loadProfile(name string) (*config.Profile, error) {
 	if name == "" {
 		name = "dev.yaml"
+	}
+	if _, err := os.Stat(name); err == nil {
+		return config.Load(name)
 	}
 	if data, err := profiles.Get(name); err == nil {
 		return config.Parse(data)
