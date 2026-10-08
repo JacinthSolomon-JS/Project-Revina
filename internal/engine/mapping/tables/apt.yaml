@@ -1,0 +1,8 @@
+# Logical package name -> native Debian/Ubuntu APT package.
+# Identity is implied, so entries are only needed when names differ.
+rg: ripgrep
+fd: fd-find
+bat: batcat
+exa: exa
+go: golang
+metasploit: metasploit-framework

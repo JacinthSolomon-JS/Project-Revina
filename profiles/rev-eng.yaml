@@ -1,0 +1,22 @@
+name: rev-eng
+description: Reverse engineering and binary analysis toolkit
+tasks:
+  - id: static-analysis
+    kind: package
+    description: Static and dynamic analysis tools
+    packages:
+      - ghidra
+      - rizin
+      - radare2
+      - cutter
+      - iaito
+      - gdb
+  - id: binary-utils
+    kind: package
+    description: Binary inspection and exploitation helpers
+    packages:
+      - binwalk
+      - checksec
+      - lief
+      - strace
+      - ltrace

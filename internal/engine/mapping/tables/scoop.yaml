@@ -1,0 +1,3 @@
+# Logical package name -> native Scoop bucket package.
+# Scoop names usually match the logical name; corrections belong here.
+exa: eza

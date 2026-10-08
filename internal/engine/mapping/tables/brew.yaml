@@ -1,0 +1,5 @@
+# Logical package name -> native Homebrew formula.
+# Identity is implied, so entries are only needed when names differ.
+rg: ripgrep
+exa: eza
+burp: burp-suite

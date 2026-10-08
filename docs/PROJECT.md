@@ -18,8 +18,8 @@ Building a multi-OS environment provisioner and hardening tool across macOS, Win
                    | Execution Engine / Orchestrator |
                    +-----+-----------+---------------+
                          |           |
-            +------------+           +------------+
-            |                                     |
+            +------------+           +--------------+
+            |                                       |
 +-----------v-------------+             +-----------v-----------+
 | OS Package Translators  |             |  Hardening Modules    |
 | (Brew/Winget/Apt/Pacman)|             | (Registry/PAM/Sysctl) |
@@ -59,8 +59,8 @@ Organize setup tasks into modular profiles so users can toggle specific suites:
 ##### B. Reverse Engineering & Binary Analysis
 **Static/Dynamic:** 
 - [ ] Ghidra
-- [ ] Cutter/Rizal
-- [ ] Radare2/IAITO
+- [ ] Rizin / Cutter
+- [ ] Radare2 / iaito
 - [ ] GDB + pwndbg / gef
 - [ ] x64dbg (Windows)
 

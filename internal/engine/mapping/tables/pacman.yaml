@@ -1,0 +1,3 @@
+# Logical package name -> native Arch pacman package.
+rg: ripgrep
+exa: eza

@@ -1,0 +1,3 @@
+# Logical package name -> native Chocolatey package.
+bat: bat
+rg: ripgrep

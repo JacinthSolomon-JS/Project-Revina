@@ -1,0 +1,4 @@
+# Logical package name -> native Windows winget package ID.
+bat: sharkdp.bat
+fd: sharkdp.fd
+rg: BurntSushi.ripgrep.MSVC

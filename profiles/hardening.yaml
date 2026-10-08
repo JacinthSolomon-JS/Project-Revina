@@ -1,0 +1,38 @@
+name: hardening
+description: System hardening (audit by default; apply requires --yes)
+tasks:
+  - id: kernel
+    kind: hardening
+    description: Secure kernel and network parameters
+    rules:
+      - sysctl-secure
+  - id: ssh
+    kind: hardening
+    description: Refuse password-based SSH login
+    rules:
+      - sshd-password-auth
+  - id: firewall
+    kind: hardening
+    description: Enable the host firewall
+    rules:
+      - ufw-enable
+  - id: macos-gatekeeper
+    kind: hardening
+    description: Gatekeeper assessments enabled
+    rules:
+      - gatekeeper
+  - id: macos-remote-login
+    kind: hardening
+    description: Disable Remote Login (SSH)
+    rules:
+      - remote-login
+  - id: windows-smbv1
+    kind: hardening
+    description: Disable the SMBv1 protocol
+    rules:
+      - disable-smbv1
+  - id: windows-powershell
+    kind: hardening
+    description: PowerShell execution policy Restricted
+    rules:
+      - powershell-policy

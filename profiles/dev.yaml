@@ -1,0 +1,17 @@
+name: dev
+description: Core developer CLI utilities
+tasks:
+  - id: cli-essentials
+    kind: package
+    description: Modern CLI replacements
+    packages:
+      - ripgrep
+      - fzf
+      - bat
+      - zoxide
+  - id: dev-languages
+    kind: package
+    description: Language toolchains
+    packages:
+      - go
+      - rustup
